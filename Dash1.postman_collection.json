@@ -1,0 +1,1105 @@
+{
+	"info": {
+		"_postman_id": "d6c3cb26-3931-4f67-bbcf-2dbc4b80e616",
+		"name": "Dash1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01.авторизация",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							" var jsonData = JSON.parse(responseBody);\r",
+							"console.log(jsonData.result);\r",
+							"console.log('токен получен');\r",
+							"pm.environment.set(\"tokenL\", jsonData.result);\r",
+							"console.log(pm.environment.get('tokenL'));\r",
+							"console.log('токен из переменной ');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var\r",
+							" today = new Date();\r",
+							" year=today.getFullYear();\r",
+							" month=today.getMonth()+1;\r",
+							" day=today.getDate();\r",
+							" dayTodayString1=year+'-'+('0' + month).slice(-2)+'-'+('0' +day).slice(-2); //запись в формате 2021-02-18\r",
+							"pm.environment.set(\"dayTodayStringFrom\", dayTodayString1); \r",
+							"pm.environment.set(\"dateToday\",today.toLocaleDateString()); //запись в формате 18.02.2021\r",
+							"\r",
+							"\r",
+							"var\r",
+							" day1=today.getDate()+1;\r",
+							" d = new Date(year, month, day1);\r",
+							" day1=d.getDate();\r",
+							" dayTodayString2=year+'-'+('0' + month).slice(-2)+'-'+('0' +day1).slice(-2);\r",
+							"pm.environment.set(\"dayTodayStringTo\", dayTodayString2); \r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"//someDay = new Date(); \r",
+							"//console.log(someDay); \r",
+							"//someDay.setDate(someDay.getDate()+1);\r",
+							"//console.log(someDay);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"login\": \"test_editor\", \"password\": \"gcm123321\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/auth/sign-in",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02. инфо о профиле",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var name1 = JSON.parse(responseBody);\r",
+							"console.log(name1.result);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/user/profile",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "----------Планер------------------------------",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "LINK",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/planner/plan/week",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"planner",
+						"plan",
+						"week"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1 создание полнофункциональной карточки черновик",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var Card = JSON.parse(responseBody);\r",
+							"console.log(Card.result.id);\r",
+							"pm.environment.set(\"idCard\", Card.result.id);\r",
+							"\r",
+							"pm.test(\"Создана карточка в статусе Черновик\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.result.status_id).to.eql(1);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"shape\":\"DETAILED\",\"date\":\"{{dayTodayStringFrom}}\",\"status_id\":1,\"links\":[],\"is_completed\":false,\"thesis\":null,\"experts\":null,\"title\":\"Карточка {{dateToday}}\",\"description\":\"тест\",\"sphere\":[7],\"plot\":[13],\"strategic_line_id\":[20],\"thematic_project_id\":[123],\"district\":[5],\"area\":[2],\"executive_authority\":[379],\"responsible_ea_id\":41,\"files\":[],\"type_id\":7}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/scheduler",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "перевод карточки из черновик в принято",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status_id\":2,\"deleted\":true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}/status",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2 список карточек за день, проверка новой",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Новая карточка в списке\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Карточка\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler?date_from={{dayTodayStringFrom}}&date_to={{dayTodayStringTo}}&deleted=false",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler"
+					],
+					"query": [
+						{
+							"key": "date_from",
+							"value": "{{dayTodayStringFrom}}"
+						},
+						{
+							"key": "date_to",
+							"value": "{{dayTodayStringTo}}"
+						},
+						{
+							"key": "deleted",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3 редактирование карточки",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Название изменено\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Карточка ред\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Описание изменено\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.result.description).to.eql(\"тест тест\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"links\":[],\"shape\":\"DETAILED\",\"title\":\"Карточка ред {{dateToday}}\",\"type_id\":7,\"author_id\":45,\"order\":6,\"event_id\":null,\"top_title\":\"тест\",\"description\":\"тест тест\",\"is_completed\":false,\"require_attention\":false,\"top\":true,\"thematic_project_id\":[123,132],\"strategic_line_id\":[20,29],\"responsible_ea_id\":8,\"risk_response\":\"тест\",\"platform\":\"тест\",\"sphere\":[7,56],\"plot\":[13,58],\"district\":[5,3],\"area\":[2,1],\"executive_authority\":[379,9],\"files\":[],\"thesis\":null,\"experts\":null,\"updated_at\":null,\"time\":\"23:23:23\",\"is_subscribe\":true,\"is_same_ea\":true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "отклонение крточки",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Статус карточки 'Отклонено'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.result).to.eql(true);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"status_id\":3,\"deleted\":true}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}/status",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4 удаление карточки",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5 инфо о карточке",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Статус карточки 'Удалено'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.result.status_id).to.eql(-1);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "восстановление карточки",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var statusVost = JSON.parse(responseBody);\r",
+							"   if (statusVost.result.status_id>0){\r",
+							"        pm.test(\"Карточка восстановлена\")}\r",
+							"    if (statusVost.result.status_id=3){\r",
+							"        pm.test(\"Статус 'Отклонено'\")}\r",
+							"    else if (statusVost.result.status_id=2){\r",
+							"        pm.test(\"Статус 'Принято'\")}\r",
+							"    else if (statusVost.result.status_id=1){\r",
+							"        pm.test(\"Статус 'Черновик'\")}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler/{{idCard}}/restore",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"{{idCard}}",
+						"restore"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6 наличие уведомлений на текущий день",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler/notifications?date_from={{dayTodayStringFrom}}&date_to={{dayTodayStringTo}}&deleted=true&",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"notifications"
+					],
+					"query": [
+						{
+							"key": "date_from",
+							"value": "{{dayTodayStringFrom}}"
+						},
+						{
+							"key": "date_to",
+							"value": "{{dayTodayStringTo}}"
+						},
+						{
+							"key": "deleted",
+							"value": "true"
+						},
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7 наличие уведомлений +- неделя от текущей даты",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/api/scheduler/notifications/weeks?date_from={{dayTodayStringFrom}}&date_to={{dayTodayStringTo}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"scheduler",
+						"notifications",
+						"weeks"
+					],
+					"query": [
+						{
+							"key": "date_from",
+							"value": "{{dayTodayStringFrom}}"
+						},
+						{
+							"key": "date_to",
+							"value": "{{dayTodayStringTo}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "---------Справочники-----------------------",
+			"request": {
+				"method": "LINK",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/handbook/sphere?page=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"handbook",
+						"sphere"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "сферы список",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/spheres",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"spheres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "последнее обновление сферы",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/last-update/spheres",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"last-update",
+						"spheres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "количество событий со сферой",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/count-event/spheres",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"count-event",
+						"spheres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "редактирование сферы",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"ID\":57,\"order\":1,\"name\":\"Тест 🧁{{$timestamp}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/57/spheres",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"57",
+						"spheres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "страт линии список",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/line",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"line"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "последнее обновление страт линии",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/last-update/lines",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"last-update",
+						"lines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "количество событий с линией",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/count-event/lines",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"count-event",
+						"lines"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "список проектов",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/project",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"project"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "последние обновление проекта",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/last-update/projects",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"last-update",
+						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "количество событий с проектом",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/count-event/projects",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"count-event",
+						"projects"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "список сюжетов",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/plots",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"plots"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "последнее обновление сюжета",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/last-update/plots",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"last-update",
+						"plots"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "количество событий с сюжетом",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/dictionary/stats/count-event/plots",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"dictionary",
+						"stats",
+						"count-event",
+						"plots"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Создание события",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "Token  {{tokenL}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"tags\":[],\"beginDate\":\"2021-02-18T11:54:15+03:00\",\"criticality\":4,\"name\":\"Событие {{dateToday}}\",\"sphere\":[9],\"typeId\":16,\"audience\":[1],\"district\":[5],\"area\":[],\"source\":[11],\"executiveAuthority\":[],\"executiveAuthorityStaff\":[],\"referencesSource\":[],\"audienceRating\":null,\"audienceRatingAutoProperty\":{\"isComputed\":false},\"plot\":[]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://demo.socialinfluence.ru/api/event",
+					"protocol": "https",
+					"host": [
+						"demo",
+						"socialinfluence",
+						"ru"
+					],
+					"path": [
+						"api",
+						"event"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const $ = cheerio.load(pm.response.text())",
+					"if (pm.expect($('title').text()).to.not.be.empty=\"405 Not Allowed\"){",
+					"        pm.environment.set('tite', $('title').text())}",
+					"",
+					"if (pm.environment.get('tite') != \"405 Not Allowed\")",
+					"{var jsonData = JSON.parse(responseBody);",
+					"if  (jsonData.errorCode != \"0\" && jsonData.errorCode != \"200\")  {",
+					" console.log ('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ),",
+					" postman.setNextRequest(null)",
+					"};",
+					"}"
+				]
+			}
+		}
+	]
+}
